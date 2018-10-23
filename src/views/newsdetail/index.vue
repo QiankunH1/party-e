@@ -36,8 +36,13 @@
             getdata(){
                console.log(this.$route.params.id)
                this.id = this.$route.params.id
-               axios.get(`http://211.67.177.56:8080/hhdj/news/newsContent.do?newsId=${this.id}`).then(res=>{
-                console.log(res)
+            //    axios.get(`http://211.67.177.56:8080/hhdj/news/newsContent.do?newsId=${this.id}`).then(res=>{
+            //     console.log(res)
+            //     this.news= res.data.data
+               
+            //    })
+               this.$axios.get(`/hhdj/news/newsContent.do?newsId=${this.id}`).then(res=>{
+                console.log(res.data)
                 this.news= res.data.data
                
                })

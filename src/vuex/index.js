@@ -6,7 +6,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
     state:{
         userinfo:null,
-        meta:""
+        meta:"",
+        token: ''
     },
     mutations:{
         'CHANGE_userinfo'(state,payload){
@@ -17,6 +18,9 @@ export default new Vuex.Store({
         // },
         'getmeta'(state,payload){
             state.meta = payload
+        },
+        'CHANGE_TOKEN'(state, token){
+            state.token = token
         }
 
     },actions:{

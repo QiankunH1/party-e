@@ -16,7 +16,7 @@
        </div>
        <!-- 个人信息清单 -->
        <div class="list">
-           <router-link class="info person-info" to="">
+           <router-link class="info person-info" to="/userinfo">
                <div class="info-left">
                    <div>
                         <i class="iconfont icon-beianxinxiyuandi"></i>
@@ -97,10 +97,13 @@ export default {
     },
     logout() {
       console.log(this.$store.state.userinfo);
-      this.$store.commit("CHANGE_userinfo", this.userinfo);
+      // this.$store.commit("CHANGE_userinfo", this.userinfo);
+      this.$store.commit('CHANGE_userinfo',this.userinfo)
     }
   },
-  created() {}
+  created() {
+ 
+  }
 };
 </script>
 

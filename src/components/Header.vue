@@ -2,7 +2,7 @@
     <div>
         <div class="wrap">
            <div class="icon-wrap">
-               <i class="iconfont icon-right" @click="$router.back(-1)"></i>
+               <i class="iconfont icon-right" @click="$router.go(-1)"></i>
            </div>
             <!-- <div class="title" v-if="right">
                 {{this.$route.meta.title}}
@@ -46,10 +46,11 @@
     color: #fff;
     text-align: center;
     position: relative;
-    font-size: 20px;
+    font-size: 18px;
     display: flex;
     // background-color: #c50206;
     background-color: #02c598;
+    background-color: #c50206;
     padding: 0 5px;
     .icon-right{
         font-size: 22px;

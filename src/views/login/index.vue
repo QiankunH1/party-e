@@ -5,7 +5,7 @@
              <img src="../../style/imgs/header-dangjian.png" alt="">
         </div>
         <div class="login-content">
-            <form action="">
+            <form @submit.prevent>
                 <input class="input-top"  placeholder="身份证号"  type="text" v-model="formdata.idNum">
                 <input class='input-bottom'  placeholder="密码"  type="text" v-model="formdata.password">
                 <button class="btn" @click="login">登录</button>
@@ -45,7 +45,7 @@
                         });
                         console.log(res.data)
                         this.$store.commit('CHANGE_userinfo',res.data.data)
-
+                        this.$store.commit('CHANGE_TOKEN', res.data.token)
                     this.$router.push('/dangjian')
                 }else{
                     this.$dialog.alert({

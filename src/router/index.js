@@ -32,6 +32,7 @@ const components ={
   minzhupingyi:()=>import('@/views/minzhupingyi/index'),
   pingyi:()=>import('@/views/minzhupingyi/pingyi'),
   summary:()=>import('@/views/minzhupingyi/summary'),
+ userinfo:()=>import('@/views/userinfo/index'),
 }
 
 export default new Router({
@@ -225,6 +226,14 @@ export default new Router({
         title:'民族评议'
       },
       component:components.pingyi,
+    },
+    {
+      path: '/userinfo',
+      name: 'userinfo',
+      meta:{
+        title:'个人信息'
+      },
+      component:components.userinfo,
     },
    
   ]
