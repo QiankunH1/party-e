@@ -3,15 +3,39 @@
         <div class="head-wrap">
             <Header></Header>
         </div>
-        <ul class="content-wrap">
-            <van-list
+           <ul class="content-wrap"> 
+            <li class="content" >
+                <div class="user-info clearfix">
+                    <div class="flr interact">
+                        党员互动
+                    </div>
+                    <div class="fll img-wrap">
+                        <img :src="formdata.header" alt="">
+                    </div>
+                    <div class="fll">
+                        <div>{{formdata.username}}</div>
+                        <div class="time-info">
+                            <i class="iconfont icon-shijian"></i>
+                            <span>{{formdata.currentTime}}</span>
+                            <i class="iconfont icon-laba88"></i>
+                            <span>公开</span>
+                        </div>
+                    </div>             
+                </div>
+                <div class="text">
+                    {{formdata.content}}
+                </div>
+            </li>    
+        </ul> 
+           <ul class="content-wrap"> 
+                <van-list
                 v-model="loading"
                 :finished="finished"
                 @load="onLoad"
                 :offset=0
                 :immediate-check='first'
-                >
-            <li class="content" v-for="(item,index) in formdata" :key="index">
+                >   
+            <li class="content" v-for="(item,index) in formdata2" :key="index">
                 <div class="user-info clearfix">
                     <div class="flr interact">
                         党员互动
@@ -27,49 +51,27 @@
                             <i class="iconfont icon-laba88"></i>
                             <span>公开</span>
                         </div>
-                    </div>
-                    
+                    </div>             
                 </div>
                 <div class="text">
                     {{item.content}}
                 </div>
-                <div class="reply clearfix">
-                    <span class="flr">
-                        <i class="iconfont icon-xinxi"></i>
-                        <span @click="toreply(item)">回复</span>
-                    </span>
-                </div>
-            </li> 
-            </van-list>         
+            </li>  
+          </van-list>      
         </ul> 
         <div class='no-more' v-if="finished">
             没得更多数据了
-        </div>
-        <div @click="iconwrap">
-            <i class="iconfont icon-tianjia"></i>
-        </div>
-        <div class="publishWrap" v-show="isshow">
-            <div class="areaWrap">
-               <textarea class="area" v-model="content"></textarea>
-            </div>
-            <div class="clearfix">
-                <button class="publish" @click="publish">发布</button>
-                <button class="cancle flr" @click="mengceng">取消</button>
-            </div>
-        </div>
-        <div class="mengceng" v-show="isshow" @click="mengceng">
-
         </div>
     </div>
 </template>
 
 <script>
-import axios from "axios";
 import Header from "@/components/Header";
 export default {
   data() {
     return {
-      formdata: {},
+      formdata: [],
+      formdata2: {},
       type: 0,
       page: 1,
       rows: 10,
@@ -77,8 +79,8 @@ export default {
       loading: false,
       finished: false,
       first: false,
-      isshow:false,
-      content:'',
+      isshow: false,
+      content: ""
     };
   },
   components: {
@@ -86,11 +88,10 @@ export default {
   },
   methods: {
     getdata() {
+        let id = this.$route.params.id
       this.$axios
         .get(
-          `/hhdj/forum/forumList.do?page=${this.page}&rows=${this.rows}&type=${
-            this.type
-          }&cates=0`
+          `/hhdj/forum/forumCommentList.do?page=${this.page}&rows=${this.rows}&forum_id=${id}`
         )
         .then(res => {
           console.log(res);
@@ -106,15 +107,13 @@ export default {
           this.finished = true;
         }
         this.$axios
-          .get(
-            `/hhdj/forum/forumList.do?page=${this.page}&rows=${
-              this.rows
-            }&type=${this.type}&cates=0`
-          )
+         .get(
+          `/hhdj/forum/forumCommentList.do?page=${this.page}&rows=${this.rows}&forum_id=${id}`
+        )
           .then(res => {
             console.log(res);
             let arr = [...this.formdata, ...res.data.rows];
-            this.formdata = arr;
+            this.formdata2 = arr;
             resolve();
           });
       });  
@@ -126,32 +125,13 @@ export default {
         this.loading = false;
       });
     },
-    iconwrap(){
-      this.isshow=true
-    },
-    mengceng(){
-      this.isshow=false
-    },
-     //点击发布事件
-  publish(){
-    console.log('aaa')
-    let form =new FormData()
-    form.append('content',this.content)
-    this.$axios.post(`/hhdj/forum/saveForum.do`,form).then(res=>{
-      console.log(res)
-      this.isshow=false,
-       this.getdata()
-    })
-  },
-  //跳转回复详情页
-  toreply(item){
-    this.$router.push({name:'reply', params:{item}})
-  }
   },
   created() {
-    this.getdata();
-  },
- 
+      this. getdata()
+      this.formdata=this.$route.params.item[0],
+      console.log(this.formdata)
+    
+  }
 };
 </script>
 
@@ -211,14 +191,6 @@ export default {
         font-size: 12px;
       }
       .interact {
-        // font-size: 12px;
-        // color: #c50206;
-        // // height: 26px;
-        // // line-height: 26px;
-        // // padding: 3px 0;
-        // width: 66px;
-        // border: 1px solid #c50206;
-        // border-radius: 15%/50%;
         font-size: 12px;
         padding: 4px 8px;
         color: red;
@@ -248,50 +220,6 @@ export default {
     z-index: 99;
     bottom: 80px;
     right: 20px;
-  }
-  //发布框样式
-  .publishWrap{
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 160px;
-    padding: 10px;
-    z-index: 999;
-    background-color: #ebebeb;
-    .area{
-      width: 100%;
-      height: 100px;
-      border-radius: 4px;
-      font-size: 14px;
-      color: #333;
-      // margin: auto auto;
-    }
-    .publish,.cancle{
-      outline: none;
-      border: none;
-      border-radius: 4px;
-      background-color: rgb(248, 64, 64);
-      padding: 5px;
-      height: 30px;
-      font-size: 12px;
-      color: #fff;
-      margin-top: 4px;
-    }
-    .cancle{
-      background-color: #fff;
-      color: #000;
-    }
-  }
-  //遮罩层样式
-  .mengceng{
-    position: fixed;
-    bottom: 0;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 998;
-    background: rgba($color: #000000, $alpha: .5)
   }
 }
 </style>

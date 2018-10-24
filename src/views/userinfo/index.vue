@@ -12,6 +12,10 @@
                     保存
                 </div>
             </div>
+            <!-- <div class="item">
+                <span>姓名</span>
+                <input type="text" :disabled='ischange' v-model="userinfo.username">
+            </div> -->
             <div class="item">
                 <span>头像</span>
                <label for="ava" class="label_wraper"   @change="changepic">
@@ -96,137 +100,131 @@
 </template>
 
 <script>
-import Header from '@/components/Header'
-import axios from 'axios'
-    export default {
-        data(){
-            return{
-                ischange:true,
-                userinfo:{},
+import Header from "@/components/Header";
+import axios from "axios";
+export default {
+  data() {
+    return {
+      ischange: true,
+      userinfo: {}
+    };
+  },
+  components: {
+    Header
+  },
+  methods: {
+    editstate() {
+      this.ischange = false;
+    },
+    getuserinfo() {
+      this.$axios.post(`/hhdj/user/userInfo.do`).then(res => {
+        console.log(res);
+        this.userinfo = res.data.data;
+      });
+    },
+    savestate() {
+      this.ischange = true;
 
-            }
-        },
-        components:{
-            Header,
-        },
-        methods:{
-            editstate(){
-              this.ischange=false
-            },
-            getuserinfo(){
-                this.$axios.post(`/hhdj/user/userInfo.do`).then(res=>{
-                   console.log(res)
-                   this.userinfo=res.data.data 
-                })
-            },
-            savestate(){
-                this.ischange=true
-          
-            let from = new FormData()
-            from.append('username',this.userinfo.username)
-            from.append('hometown',this.userinfo.hometown)
-            from.append('address',this.userinfo.address)
-            from.append('nation',this.userinfo.nation)
-            from.append('wxNum',this.userinfo.wxNum)
-            from.append('qqNum',this.userinfo.qqNum)
-            from.append('sex',this.userinfo.sex)
-            from.append('education',this.userinfo.education)
-            from.append('jobRank',this.userinfo.jobRank)
-            from.append('salary',this.userinfo.salary)
-            from.append('joinPartyTime',this.userinfo.joinPartyTime)
-            from.append('lastPayTime',this.userinfo.lastPayTime)
-            // from.append('partyIdentity',this.userinfo.partyIdentity)
-             from.append('partyStatus',this.userinfo.partyStatus)
-            from.append('header',this.userinfo.url)
-                this.$axios.post('hhdj/user/modifyInfo.do',from).then(res=>{
-                    console.log(res)
-                    console.log("修改成功")
-                    // this.$router.push(`/userinfo`);
-                    console.log(this.userinfo)
-                    this.$store.commit('CHANGE_userinfo',this.userinfo)
-                })
-            },
-            changepic(e){
-                let _this = this;
-                var file = e.target.files[0];
-                //file是一个二进制
-                let reader = new FileReader();
-                reader.onload=function(){
-                    console.log(reader)
-                    // 把图片转为base64码加载显示
-                    let imgsrc =reader.result.split(',')[1];
-                    let form = new FormData();
-                    form.append('myFile',imgsrc);
-                    _this.$axios.post('/hhdj/image/uploadBase64.do',form).then (res=>{
-                    console.log(res)
-                    _this.userinfo.url=res.data.url
-                    _this.userinfo.header = reader.result;
-                    //获取imginput
-             
-                    }) 
-                }
-                
-                reader.readAsDataURL(file)
-            }
-             
-        },
-        created(){
-            this.getuserinfo()
-            // this.userinfo=this.$store.state.userinfo
-            // console.log(this.userinfo)
-        }
+      let from = new FormData();
+      from.append("username", this.userinfo.username);
+      from.append("hometown", this.userinfo.hometown);
+      from.append("address", this.userinfo.address);
+      from.append("nation", this.userinfo.nation);
+      from.append("wxNum", this.userinfo.wxNum);
+      from.append("qqNum", this.userinfo.qqNum);
+      from.append("sex", this.userinfo.sex);
+      from.append("education", this.userinfo.education);
+      from.append("jobRank", this.userinfo.jobRank);
+      from.append("salary", this.userinfo.salary);
+      from.append("joinPartyTime", this.userinfo.joinPartyTime);
+      from.append("lastPayTime", this.userinfo.lastPayTime);
+      // from.append('partyIdentity',this.userinfo.partyIdentity)
+      from.append("partyStatus", this.userinfo.partyStatus);
+      from.append("header", this.userinfo.url);
+      this.$axios.post("hhdj/user/modifyInfo.do", from).then(res => {
+        console.log(res);
+        console.log("修改成功");
+        // this.$router.push(`/userinfo`);
+        console.log(this.userinfo);
+        this.$store.commit("CHANGE_userinfo", this.userinfo);
+      });
+    },
+    changepic(e) {
+      let _this = this;
+      var file = e.target.files[0];
+      //file是一个二进制
+      let reader = new FileReader();
+      reader.onload = function() {
+        console.log(reader);
+        // 把图片转为base64码加载显示
+        let imgsrc = reader.result.split(",")[1];
+        let form = new FormData();
+        form.append("myFile", imgsrc);
+        _this.$axios.post("/hhdj/image/uploadBase64.do", form).then(res => {
+          console.log(res);
+          _this.userinfo.url = res.data.url;
+          _this.userinfo.header = reader.result;
+          //获取imginput
+        });
+      };
+      reader.readAsDataURL(file);
     }
+  },
+  created() {
+    this.getuserinfo();
+    // this.userinfo=this.$store.state.userinfo
+    // console.log(this.userinfo)
+  }
+};
 </script>
 
 <style scoped lang='scss'>
-.label_wraper{
-    display: inline-block;
-    // height: 48px;
-    width: 48px;
-    border: 1px solid #ddd;
+.label_wraper {
+  display: inline-block;
+  // height: 48px;
+  width: 48px;
+  border: 1px solid #ddd;
 }
-.input_img{
-    display: none;
+.input_img {
+  display: none;
 }
-.wrap{
-    font-size: 14px;
-    color: #666;
-    .head-wrap{
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
+.wrap {
+  font-size: 14px;
+  color: #666;
+  .head-wrap {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+  .content-wrap {
+    margin-top: 44px;
+    padding: 0 10px;
+    input {
+      background: none;
+      outline: none;
+      border: 0px;
     }
-    .content-wrap{
-        margin-top: 44px;
-        padding: 0 10px;
-        input{  
-            background:none;  
-            outline:none;  
-            border:0px;
-        }
-        .changestate{
-            color: #fff;
-            font-size: 16px;
-            position: fixed;
-            top:13px;
-            right: 10px;
-        }
-        .item{
-            height: 48px;
-            padding: 10px 0px;
-            display: flex;
-            justify-content: space-between;
-            img{
-                width: 48px;
-                height: 100%;
-            }
-            input{
-                text-align: right;
-            }
-        }
-
+    .changestate {
+      color: #fff;
+      font-size: 16px;
+      position: fixed;
+      top: 13px;
+      right: 10px;
     }
-
+    .item {
+      height: 48px;
+      padding: 10px 0px;
+      display: flex;
+      justify-content: space-between;
+      img {
+        width: 48px;
+        height: 100%;
+      }
+      input {
+        text-align: right;
+      }
+    }
+  }
 }
 </style>

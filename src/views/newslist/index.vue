@@ -68,7 +68,6 @@
                 type:0,
                 page:1,
                 pn:0,
-                i:1,
                 rows:10,
                 info:[],
                 total: 0,
@@ -97,12 +96,18 @@
             })
         },
         getmorenews(){
+             return new Promise((resolve, reject) => {
             this.page +=1;
+             if(this.page>this.pn){
+                this.finished=true;
+            }
              axios.get(`http://211.67.177.56:8080/hhdj/news/newsList.do?page=${this.page}&rows=${this.rows}&type=${this.type}`).then(res=>{
                  let newarr = [...this.info,...res.data.rows]
                     this.info =newarr
                     console.log(res)
+                    resolve()
              })
+            })
         },
         tonewsdetail(id){
             this.meta=this.$route.meta.title
@@ -111,20 +116,30 @@
         },
 
     //   加载更多
-            onLoad() {
-        setTimeout(() => {
-           this.i =this.i+1
-        if(this.i<=this.pn) {
-         this.getmorenews()
-        }
-         this.loading = false;
-         if(this.i>=this.pn) {
-         this.finished = true;
-        }
-          }, 2000);
-            
+             onLoad() {
+      // 异步更新数据
+    //   setTimeout(() => {
+    //       let i = 1;
+    //       i= i+1
          
+    //     if (i<=this.pn) {
+    //      this.getmoredata()
+    //     }
+    //     // 加载状态结束
+    //     this.loading = false;
+
+    //     // 数据全部加载完成
+    //     if (i>this.pn) {
+    //       this.finished = true;
+    //     }
+    //   }, 2000);
+        // console.log(1232132131)
+        this.loading = true;
+        this.getmorenews().then(()=> {
+            this.loading = false
+        })      
     },
+
 
 
  

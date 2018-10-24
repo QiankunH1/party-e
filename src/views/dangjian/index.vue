@@ -148,7 +148,7 @@ export default {
     }
   }
   //个人信息列表
-  .list {
+  .list { 
     .info {
       padding: 10px;
       border-bottom: 1px solid rgb(221, 221, 221);

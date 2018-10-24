@@ -33,6 +33,7 @@ const components ={
   pingyi:()=>import('@/views/minzhupingyi/pingyi'),
   summary:()=>import('@/views/minzhupingyi/summary'),
  userinfo:()=>import('@/views/userinfo/index'),
+ reply:()=>import('@/views/list/exchange/reply'),
 }
 
 export default new Router({
@@ -234,6 +235,14 @@ export default new Router({
         title:'个人信息'
       },
       component:components.userinfo,
+    },
+    {
+      path: '/reply/:id',
+      name: 'reply',
+      meta:{
+        title:'党员云互动'
+      },
+      component:components.reply,
     },
    
   ]
