@@ -70,17 +70,18 @@ import Header from "@/components/Header";
 export default {
   data() {
     return {
-      formdata: [],
-      formdata2: {},
+      formdata:'',
+      formdata2:'',
       type: 0,
       page: 1,
       rows: 10,
       pn: 1,
+      id:'',
       loading: false,
       finished: false,
       first: false,
       isshow: false,
-      content: ""
+      content: "",
     };
   },
   components: {
@@ -88,32 +89,33 @@ export default {
   },
   methods: {
     getdata() {
-        let id = this.$route.params.id
+        this.id = this.formdata.forumId
       this.$axios
         .get(
-          `/hhdj/forum/forumCommentList.do?page=${this.page}&rows=${this.rows}&forum_id=${id}`
+          `/hhdj/forum/forumCommentList.do?page=${this.page}&rows=${this.rows}&forum_id=${this.id}`
         )
         .then(res => {
-          console.log(res);
-          this.formdata = res.data.rows;
+          // console.log(res)
+          this.formdata2 = res.data.rows;
           this.pn = Math.ceil(res.data.total / this.rows);
-          console.log(this.pn);
+          // console.log(this.pn);
         });
     },
     getmoredata() {
       return new Promise((resolve, reject) => {
         this.page = this.page + 1;
-        if (this.page > this.pn) {
+        if (this.page >= this.pn) {
           this.finished = true;
         }
+        this.id = this.formdata.forumId
         this.$axios
          .get(
-          `/hhdj/forum/forumCommentList.do?page=${this.page}&rows=${this.rows}&forum_id=${id}`
+          `/hhdj/forum/forumCommentList.do?page=${this.page}&rows=${this.rows}&forum_id=${this.id}`
         )
           .then(res => {
-            console.log(res);
-            let arr = [...this.formdata, ...res.data.rows];
+            let arr = [...this.formdata2, ...res.data.rows];
             this.formdata2 = arr;
+            // console.log(this.formdata2)
             resolve();
           });
       });  
@@ -127,9 +129,10 @@ export default {
     },
   },
   created() {
+      
+      this.formdata=this.$route.params.item
+      // console.log(this.formdata)
       this. getdata()
-      this.formdata=this.$route.params.item[0],
-      console.log(this.formdata)
     
   }
 };

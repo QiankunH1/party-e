@@ -147,6 +147,9 @@ export default {
   toreply(item){
     this.$router.push({name:'reply', params:{item}})
   }
+  // toreply(){
+  //   this.$router.push('/reply')
+  // }
   },
   created() {
     this.getdata();

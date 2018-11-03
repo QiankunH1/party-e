@@ -15,12 +15,12 @@
         <!-- 内容区域 -->
         <div>
             <van-list
-  v-model="loading"
-  :finished="finished"
-  @load="onLoad"
-  :immediate-check=false
-  :offset=0
->
+                v-model="loading"
+                :finished="finished"
+                @load="onLoad"
+                :immediate-check="false"
+                :offset="1"
+            >
             <div class="content-wrap" v-for="(item,index) in info" :key="index" @click="tonewsdetail(item.newsId)">
                 <div class="content-left">
                     <img :src='item.pic'>
@@ -43,13 +43,13 @@
                 </div>
             </div>
             
-
+            <div class="none" v-show="isshow">
+                我也是有底线的
+            </div>
         </van-list>
         </div>
         <!-- 没有加载内容了 -->
-        <div class="none">
-            我也是有底线的
-        </div>
+        
         <!-- 下拉刷新测试 -->
         <!-- <van-pull-refresh v-model="isLoading" @refresh="getnews">
         <p>刷新次数: {{ count }}</p>
@@ -67,14 +67,15 @@
                 meta:'',
                 type:0,
                 page:1,
-                pn:0,
+                pn:1,
                 rows:10,
                 info:[],
                 total: 0,
                 arr:[],
                 list: [],
                 loading: false,
-                finished: false
+                finished: false,
+                isshow:false
             }
         },
         components:{
@@ -92,26 +93,35 @@
         getnews(){
             axios.get(`http://211.67.177.56:8080/hhdj/news/newsList.do?page=${this.page}&rows=${this.rows}&type=${this.type}`).then(res=>{
                 this.info=res.data.rows
+                this.total = res.data.total
                 this.pn =Math.ceil((res.data.total)/(this.rows)) 
             })
         },
         getmorenews(){
-             return new Promise((resolve, reject) => {
-            this.page +=1;
-             if(this.page>this.pn){
-                this.finished=true;
-            }
-             axios.get(`http://211.67.177.56:8080/hhdj/news/newsList.do?page=${this.page}&rows=${this.rows}&type=${this.type}`).then(res=>{
-                 let newarr = [...this.info,...res.data.rows]
+            return new Promise((resolve, reject) => {
+                this.page +=1;
+                console.log(this.page)
+                console.log(this.pn)
+                // if(this.page*this.rows>=this.total){
+                //     this.isshow = true;
+                //     this.finished=true;
+                // } 
+                if(this.page>this.pn){
+                    this.isshow = true;
+                    this.finished=true;
+                    this.loading = false
+                } 
+                axios.get(`http://211.67.177.56:8080/hhdj/news/newsList.do?page=${this.page}&rows=${this.rows}&type=${this.type}`).then(res=>{
+                    let newarr = [...this.info,...res.data.rows]
                     this.info =newarr
                     console.log(res)
                     resolve()
-             })
+                })
             })
         },
         tonewsdetail(id){
             this.meta=this.$route.meta.title
-          this.$store.commit('getmeta',this.meta)
+            this.$store.commit('getmeta',this.meta)
             this.$router.push(`/news/detail/${id}`)
         },
 
@@ -187,7 +197,19 @@
            this.aboutrouter()
             this.getnews()
             // this.getmorenews()
-        }
+        },
+        // watch: {
+        //     total(val) {
+        //         if(val>this.page*this.rows){
+        //             this.finished = false;
+        //             this.isshow = false;
+        //         } else {
+        //             console.log(2)
+        //             this.finished = true;
+        //             this.isshow = true;
+        //         }
+        //     }
+        // }
     }
 </script>
 
